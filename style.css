@@ -284,3 +284,64 @@ body {
 .log-item.rush   { color: #ff5555; }
 .log-item.charge { color: #88ccff; }
 .log-item.add    { color: #ff9900; }
+
+/* ============================================================
+   GARO7500 固有: 大当たり内訳トグル
+============================================================ */
+.bbDetail{display:none;}
+.bbDetail.open{display:block;}
+
+/* ============================================================
+   GARO7500 固有: 遊技履歴の当たり／投資ログ色分け
+============================================================ */
+.hi{font-size:12px;padding:4px 12px;border-bottom:1px solid #181818;color:#555;}
+.hi.hit{color:#c9a227;}
+.hi.inv{color:#444;}
+
+/* ============================================================
+   GARO7500 固有: 当たり演出モーダルオーバーレイ
+   （演出の仕組みは維持し、配色のみグールデカ系に統一）
+============================================================ */
+#ov{position:fixed;inset:0;background:rgba(0,0,0,.88);display:flex;align-items:center;justify-content:center;z-index:100;padding:16px;}
+#ov.h{display:none;}
+#mb{width:100%;max-width:400px;max-height:90vh;overflow-y:auto;border-radius:16px;padding:22px;text-align:center;}
+.mn  {background:#1a1a1a;border:2px solid #c9a227;}
+.mh  {background:#080820;border:3px solid #6366f1;}
+.ms  {background:#081408;border:3px solid #22c55e;}
+.mc  {background:#041414;border:2px solid #06b6d4;}
+.mba {background:#200808;border:3px solid #ef4444;}
+.m7  {background:#1a1400;border:3px solid #ffd700;}
+.mlt {background:#0f0020;border:3px solid #a855f7;}
+.mvi {background:#001810;border:3px solid #22c55e;}
+.me  {background:#1a1a1a;border:2px solid #444;}
+.mse {background:#1a1a1a;border:2px solid #c9a227;}
+.pi{width:100%;max-width:300px;height:130px;background:#181818;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#444;font-size:11px;line-height:1.6;text-align:center;margin:0 auto 14px;border:1px dashed #333;}
+.mt{font-size:22px;font-weight:bold;margin-bottom:6px;}
+.ms2{font-size:13px;color:#777;margin-bottom:12px;}
+.mr{font-size:18px;font-weight:bold;margin-bottom:14px;padding:10px;border-radius:8px;}
+.rw{background:rgba(34,197,94,.15);color:#22c55e;}
+.rl{background:rgba(239,68,68,.15);color:#ef4444;}
+.bm{font-size:26px;font-weight:bold;color:#ffd700;margin:10px 0 4px;}
+.bs{font-size:14px;color:#aaa;margin-bottom:12px;}
+.ltc{font-size:46px;font-weight:bold;color:#a855f7;}
+.ltl{font-size:11px;color:#777;margin-bottom:4px;}
+.rainbow{background:linear-gradient(90deg,#f00,#ff8c00,#ffd700,#0f0,#0ff,#a855f7);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:bold;}
+
+/* モーダル内の「続ける」「OK」等のボタン。
+   グールデカの .btn-action と同じ見た目にする */
+.bok{display:inline-block;padding:13px 28px;background:linear-gradient(135deg,#c9a227,#7a5c00);border:2px solid #f0e090;color:#fff;border-radius:12px;font-size:15px;font-weight:bold;cursor:pointer;margin-top:8px;box-shadow:0 4px 12px rgba(0,0,0,.4);text-shadow:0 1px 2px rgba(0,0,0,.4);}
+.bok:active{opacity:.75;transform:scale(.97);}
+
+/* ============================================================
+   GARO7500 固有: 精算（退店）画面
+============================================================ */
+.sr{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #2a2a2a;font-size:13px;}
+.sk{color:#777;}
+.sv2{font-weight:bold;font-size:14px;}
+.sfin{font-size:30px;font-weight:bold;text-align:center;padding:12px 0;}
+.smsg{font-size:13px;text-align:center;color:#f0c040;margin-bottom:10px;}
+.candy{font-size:11px;color:#888;text-align:right;margin:-4px 0 4px;}
+.ltend-row{display:flex;justify-content:space-between;font-size:16px;font-weight:bold;padding:4px 16px;}
+.ltend-total{font-size:24px;font-weight:bold;color:#ffd700;margin-top:10px;}
+.ltend-net{font-size:13px;color:#777;margin-bottom:8px;}
+.ltend-sub{font-size:11px;color:#555;}
