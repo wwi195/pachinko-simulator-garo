@@ -119,3 +119,269 @@ function toggleDetail(){
   document.getElementById('bbDetail').classList.toggle('open',_detailOpen);
   document.getElementById('bbToggleBtn').textContent=_detailOpen?'▼ 詳細を閉じる':'▶ 詳細を見る';
 }
+
+/* ============================================================
+   MODAL
+============================================================ */
+let _res=null;
+function showM(html,theme){
+  const ov=document.getElementById('ov');
+  const box=document.getElementById('mb');
+  ov.style.background='';
+  box.className=theme||'mn'; box.innerHTML=html;
+  ov.classList.remove('h');
+  return new Promise(r=>{_res=r;});
+}
+function closeM(){
+  document.getElementById('ov').classList.add('h');
+  if(_res){_res();_res=null;}
+}
+function blackout(){
+  const ov=document.getElementById('ov');
+  document.getElementById('mb').innerHTML='';
+  document.getElementById('mb').className='';
+  document.getElementById('mb').style.background='transparent';
+  ov.style.background='#000';
+  ov.classList.remove('h');
+  return new Promise(r=>setTimeout(r,500));
+}
+
+/* ============================================================
+   MODAL TEMPLATES
+============================================================ */
+// 画像が存在しない場合はテキストプレースホルダーに自動フォールバック
+function imgDiv(src,fallback){
+  return `<div class="pi"><img src="${src}" alt="" style="max-width:100%;max-height:100%;width:auto;height:auto;border-radius:8px" onload="this.parentElement.style.border='none';this.parentElement.style.background='transparent'" onerror="this.style.display='none';this.parentElement.textContent='${fallback}'"></div>`;
+}
+
+function tmHolderPre(spin){return `
+  ${imgDiv('images/holder_pre.jpg','牙狼保留\n画像プレースホルダー')}
+  <div class="mt" style="color:#818cf8">🌟 牙狼保留 出現！</div>
+  <div class="ms2">信頼度 <strong style="color:#ffd700;font-size:17px">80%</strong></div>
+  <div style="font-size:11px;color:#555;margin-bottom:18px">${spin}回転目</div>
+  <button class="bok" onclick="closeM()">大当たり判定へ →</button>`;}
+
+function tmHolderResult(win){return `
+  ${win?imgDiv('images/holder_win.png','牙狼保留\n当たり画像プレースホルダー'):''}
+  <div class="mt" style="color:#818cf8">🌟 牙狼保留</div>
+  <div class="mr ${win?'rw':'rl'}">${win?'✨ 図柄揃い！当たり！！':'💔 ハズレ…'}</div>
+  <button class="bok" onclick="closeM()">確認</button>`;}
+
+function tmSwordPre(spin){return `
+  ${imgDiv('images/sword_pre.jpg','牙狼剣\n画像プレースホルダー')}
+  <div class="mt" style="color:#22c55e">⚔️ 牙狼剣 出現！</div>
+  <div class="ms2">信頼度 <strong style="color:#ffd700;font-size:17px">40%</strong></div>
+  <div style="font-size:11px;color:#555;margin-bottom:18px">${spin}回転目</div>
+  <button class="bok" onclick="closeM()">大当たり判定へ →</button>`;}
+
+function tmSwordResult(win){return `
+  ${win?imgDiv('images/sword_win.png','牙狼剣\n当たり画像プレースホルダー'):''}
+  <div class="mt" style="color:#22c55e">⚔️ 牙狼剣</div>
+  <div class="mr ${win?'rw':'rl'}">${win?'✨ 図柄揃い！当たり！！':'💔 ハズレ…'}</div>
+  <button class="bok" onclick="closeM()">確認</button>`;}
+
+function tmCharge(spin){return `
+  <div class="mt" style="color:#06b6d4">⚡ ガロチャージ！</div>
+  <div class="bm">ガロチャージ！</div>
+  <div class="bs">（獲得 ${C.CHB}発）</div>
+  <div style="font-size:11px;color:#555;margin-bottom:14px">${spin}回転目</div>
+  <button class="bok" onclick="closeM()">OK</button>`;}
+
+function tmFig(){return `
+  ${imgDiv('images/battle_bonus.png','BATTLE BONUS\n画像プレースホルダー')}
+  <div class="mt" style="color:#ef4444">BATTLE BONUS</div>
+  <div style="font-size:12px;color:#777;margin-bottom:2px;">図柄揃い！ 1500ボーナス確定！</div>
+  <div style="font-size:12px;margin-bottom:16px;">
+    バトル勝利で<span style="color:#ffd700;font-weight:bold;">極</span><span style="color:#a855f7;font-weight:bold;">限</span><span class="rainbow">7500</span>バトル！
+  </div>
+  <div class="bm">牙狼を救え</div>
+  <button class="bok" onclick="closeM()">次へ →</button>`;}
+
+function tmFigMiss(){return `
+  <div class="mt" style="color:#aaa">通常継続…</div>
+  <div style="font-size:16px;color:#666;margin:12px 0">😢 極限バトル突入ならず</div>
+  <button class="bok" onclick="closeM()">続ける</button>`;}
+
+function tmExIn(){return `
+  ${imgDiv('images/extreme_in.png','極限7500バトル\n突入画像プレースホルダー')}
+  <div class="mt" style="color:#ef4444">🔥 極限7500バトル！</div>
+  <button class="bok" onclick="closeM()">⚔️ バトル開始！</button>`;}
+
+function tmExJudge(){return `
+  ${imgDiv('images/extreme_judge.png','JUDGEMENT\n画像プレースホルダー')}
+  <div class="mt" style="color:#ef4444">⚖️ JUDGEMENT</div>
+  <button class="bok" onclick="closeM()">JUDGEMENT</button>`;}
+
+function tmExWin(){return `
+  ${imgDiv('images/extreme_win.jpg','極限7500ボーナス\n画像プレースホルダー')}
+  <div class="mt" style="color:#ffd700">🏆 極限7500ボーナス！</div>
+  <div class="bm">7500ボーナス！</div>
+  <div class="bs">（獲得 ${C.B75}発）</div>
+  <div style="color:#22c55e;font-weight:bold;margin:10px 0">🌟 魔戒CHANCE LT 突入！！</div>
+  <button class="bok" onclick="closeM()">魔戒CHANCE LTへ →</button>`;}
+
+function tmExLose(){return `
+  <div class="mt" style="color:#888">😢 バトル敗北…</div>
+  <div class="bm">1500ボーナス！</div>
+  <div class="bs">（獲得 ${C.B15}発）</div>
+  <div style="font-size:11px;color:#555;margin-bottom:14px">通常時へ戻る</div>
+  <button class="bok" onclick="closeM()">続ける</button>`;}
+
+function tmLTIn(n){return `
+  ${imgDiv('images/lt_in.png','魔戒CHANCE\n画像プレースホルダー')}
+  <div class="mt" style="color:#a855f7">✨ 魔戒CHANCE！</div>
+  <div class="ltl">連チャン数</div>
+  <div class="ltc">${n}</div>
+  <div style="color:#aaa;font-size:12px;margin:10px 0">GOD OF GARO 25% / 1500継続 51% / 終了 24%</div>
+  <button class="bok" onclick="closeM()">🎰 回す！</button>`;}
+
+function tmLTGaro(n){return `
+  ${imgDiv('images/god.jpg','GOD OF GARO 7500\n画像プレースホルダー')}
+  <div class="mt" style="color:#ffd700">👑 GOD OF GARO！7500！</div>
+  <div class="ltl">連チャン数</div>
+  <div class="ltc" style="color:#ffd700">${n}</div>
+  <div class="bm">7500ボーナス！</div>
+  <div class="bs">（獲得 ${C.B75}発）</div>
+  <div style="color:#ffd700;font-weight:bold;margin-bottom:12px">LT継続！！</div>
+  <button class="bok" onclick="closeM()">続ける！</button>`;}
+
+function tmLTVic(n){return `
+  <div class="mt" style="color:#22c55e">🎉 1500継続ボーナス！</div>
+  <div class="ltl">連チャン数</div>
+  <div class="ltc" style="color:#22c55e">${n}</div>
+  <div class="bm">1500ボーナス！</div>
+  <div class="bs">（獲得 ${C.B15}発）</div>
+  <div style="color:#22c55e;font-weight:bold;margin-bottom:12px">LT継続！</div>
+  <button class="bok" onclick="closeM()">続ける！</button>`;}
+
+function tmLTEnd(n,b7500,b1500,totalGain){return `
+  <div class="mt" style="color:#aaa">🌙 ${n}連チャン終了</div>
+  <div class="ltend-row"><span>🎯 図柄揃い</span><span>${C.B15.toLocaleString()}発</span></div>
+  <div class="ltend-row"><span>7500ボーナス</span><span>${b7500}回</span></div>
+  <div class="ltend-row"><span>1500ボーナス</span><span>${b1500}回</span></div>
+  <div class="ltend-total">合計獲得　${totalGain.toLocaleString()}発</div>
+  <div class="ltend-sub">終了ボーナス（獲得 ${C.B15}発）</div>
+  <button class="bok" style="margin-top:16px" onclick="closeM()">通常時へ戻る</button>`;}
+
+/* ============================================================
+   BONUS SEQUENCE
+============================================================ */
+async function doHit(type){
+  const spin0=S.cur;
+
+  // 初当たり（図柄揃い）
+  award(C.B15);
+  updS();
+  await showM(tmFig(),'mn');
+
+  let runBalls=C.B15, parts=[];
+  const ev=type==='holder'?'牙狼保留→図柄揃い':'牙狼剣→図柄揃い';
+
+  if(Math.random()<C.PEX){
+    // 極限7500バトル突入（50%）
+    S.hits.total++; S.hits.fex++;
+    await showM(tmExIn(),'mba');
+    await showM(tmExJudge(),'mba');
+
+    if(Math.random()<C.PEW){
+      // 極限WIN → 7500 + LT突入
+      award(C.B75);
+      S.hits.total++; S.hits.exwin++; S.hits.lt7first++;
+      runBalls+=C.B75; parts.push('7500初回');
+      let b7500This=1, b1500This=0;
+      updS();
+      await showM(tmExWin(),'m7');
+
+      let ltN=0;
+      while(true){
+        ltN++;
+        await showM(tmLTIn(ltN),'mlt');
+        const r=Math.random();
+        if(r<C.PLG){
+          award(C.B75);
+          S.hits.total++; S.hits.lt7cont++; b7500This++;
+          runBalls+=C.B75; parts.push('7500継続');
+          updS();
+          await blackout();
+          await showM(tmLTGaro(ltN),'m7');
+        } else if(r<C.PLV){
+          award(C.B15);
+          S.hits.total++; S.hits.ltv++; b1500This++;
+          runBalls+=C.B15; parts.push('継続');
+          updS();
+          await showM(tmLTVic(ltN),'mvi');
+        } else {
+          award(C.B15);
+          S.hits.total++; S.hits.lte++;
+          runBalls+=C.B15; parts.push('終了');
+          updS();
+          const ltGain=runBalls-C.B15;
+          await showM(tmLTEnd(ltN,b7500This,b1500This,ltGain),'me');
+          break;
+        }
+      }
+      addH(`${spin0}回転目：${ev} → 極限突入 → LT${ltN}連(${parts.join('→')}) → 計${runBalls}発`,'hit');
+
+    } else {
+      // 極限LOSE → 1500終了
+      award(C.B15);
+      S.hits.total++; S.hits.exlost++;
+      runBalls+=C.B15;
+      updS();
+      await showM(tmExLose(),'me');
+      addH(`${spin0}回転目：${ev} → 極限突入 → バトル敗北 → 計${runBalls}発`,'hit');
+    }
+
+  } else {
+    // 非突入・通常時へ（50%）
+    S.hits.total++; S.hits.fnorm++;
+    updS();
+    await showM(tmFigMiss(),'me');
+    addH(`${spin0}回転目：${ev} → 非突入 → 計${runBalls}発`,'hit');
+  }
+
+  S.cur=0;
+  updS();
+}
+
+/* ============================================================
+   ONE SPIN
+============================================================ */
+async function oneSpin(){
+  ensureBalls();
+  consume(); updS();
+
+  const r=Math.random();
+
+  if(r<T2){
+    const win=r<T1;
+    flushInvest();
+    await showM(tmHolderPre(S.cur),'mh');
+    await showM(tmHolderResult(win),'mh');
+    if(!win) addH(`${S.cur}回転目：牙狼保留出現（ハズレ）`);
+    if(win) await doHit('holder');
+    return {stopped:true};
+  }
+
+  if(r<T4){
+    const win=r<T3;
+    flushInvest();
+    await showM(tmSwordPre(S.cur),'ms');
+    await showM(tmSwordResult(win),'ms');
+    if(!win) addH(`${S.cur}回転目：牙狼剣出現（ハズレ）`);
+    if(win) await doHit('sword');
+    return {stopped:true};
+  }
+
+  if(r<T5){
+    flushInvest();
+    award(C.CHB);
+    S.hits.total++; S.hits.bc++;
+    addH(`${S.cur}回転目：牙狼チャージ！（+${C.CHB}発）`);
+    updS();
+    await showM(tmCharge(S.cur),'mc');
+    return {stopped:true};
+  }
+
+  return {ok:true};
+}
