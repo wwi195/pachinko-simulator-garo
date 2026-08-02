@@ -385,3 +385,91 @@ async function oneSpin(){
 
   return {ok:true};
 }
+
+/* ============================================================
+   BUTTON HANDLERS
+============================================================ */
+function lockAll(v){
+  ['btn1','btnauto','btnr'].forEach(id=>{document.getElementById(id).disabled=v;});
+}
+
+async function doSpin1(){
+  if(_busy) return;
+  _busy=true; lockAll(true);
+  await oneSpin();
+  _busy=false; lockAll(false);
+}
+
+async function doSpinAuto(){
+  if(_busy) return;
+  _busy=true; lockAll(true);
+  for(let i=0;i<AUTO_SPIN_COUNT;i++){
+    const r=await oneSpin();
+    if(r.stopped) break;
+  }
+  _busy=false; lockAll(false);
+}
+
+function doRetire(){
+  if(_busy) return;
+  lockAll(true);
+  showSettle();
+}
+
+/* ============================================================
+   SETTLEMENT
+============================================================ */
+function showSettle(){
+  const rawExchY=Math.floor(S.balls)*S.exRate;
+  const exchY=floor500(rawExchY);
+  const candy=Math.round(rawExchY-exchY);
+  const finalPL=Math.round(exchY-S.cashUsed);
+  const outRate=S.investB>0?Math.round(Math.floor(S.balls)/S.investB*100):0;
+  const plColor=finalPL>=0?'#22c55e':'#ef4444';
+  const plSign=finalPL>=0?'+':'';
+  const plMsg=finalPL>=0?'🎊 プラス収支！おめでとう！':
+    finalPL>=-5000?'今日は小負け。次こそ！':
+    finalPL>=-20000?'取り返せる！次を信じろ！':
+    finalPL>=-50000?'大負けだが次は来る！':
+    '深追いしたかも…でも経験値は爆上がり！';
+  const p=n=>(S.ttl>0&&n>0)?` 1/${Math.round(S.ttl/n)}`:'';
+  const exTotal=S.hits.exwin+S.hits.exlost;
+  const exPct=n=>exTotal>0?` ${Math.round(n/exTotal*100)}%`:' －';
+  const html=`
+    <div class="mt" style="color:#ffd700">精算</div>
+    <hr style="border-color:#333;margin:8px 0">
+    <div class="sr"><span class="sk">持ち玉</span><span class="sv2">${Math.floor(S.balls).toLocaleString()}玉</span></div>
+    <div class="sr"><span class="sk">換金（等価）</span><span class="sv2">¥${Math.round(exchY).toLocaleString()}</span></div>
+    ${candy>0?`<div class="candy">🍬 ${candy.toLocaleString()}円はお菓子になりました</div>`:''}
+    <div class="sr"><span class="sk">総投資</span><span class="sv2" style="color:#ef4444">−¥${S.cashUsed.toLocaleString()}</span></div>
+    <hr style="border-color:#333;margin:8px 0">
+    <div class="sfin" style="color:${plColor}">${plSign}¥${Math.abs(finalPL).toLocaleString()}</div>
+    <div class="smsg">${plMsg}</div>
+    <hr style="border-color:#333;margin:8px 0">
+    <div class="sr"><span class="sk">総回転数</span><span class="sv2">${S.ttl}回</span></div>
+    <div class="sr"><span class="sk">大当たり合計</span><span class="sv2">${S.hits.total}回</span></div>
+    <div class="sr"><span class="sk">🎯 図柄揃い合計</span><span class="sv2">${S.hits.fex+S.hits.fnorm}回${p(S.hits.fex+S.hits.fnorm)}</span></div>
+    <div class="sr"><span class="sk">　├ 極限突入</span><span class="sv2">${S.hits.fex}回${p(S.hits.fex)}</span></div>
+    <div class="sr"><span class="sk">　└ 非突入</span><span class="sv2">${S.hits.fnorm}回${p(S.hits.fnorm)}</span></div>
+    <div class="sr"><span class="sk">⚡ チャージ</span><span class="sv2">${S.hits.bc}回${p(S.hits.bc)}</span></div>
+    <div class="sr"><span class="sk">⚔️ 極限バトル成功</span><span class="sv2">${S.hits.exwin}回${exPct(S.hits.exwin)}</span></div>
+    <div class="sr"><span class="sk">💔 極限バトル失敗</span><span class="sv2">${S.hits.exlost}回${exPct(S.hits.exlost)}</span></div>
+    <div class="sr"><span class="sk">⚡ 7500初回</span><span class="sv2">${S.hits.lt7first}回</span></div>
+    <div class="sr"><span class="sk">🟡 7500継続</span><span class="sv2">${S.hits.lt7cont}回</span></div>
+    <div class="sr"><span class="sk">🟢 1500継続</span><span class="sv2">${S.hits.ltv}回</span></div>
+    <div class="sr"><span class="sk">⚪ 1500終了</span><span class="sv2">${S.hits.lte}回</span></div>
+    <div class="sr"><span class="sk">出玉率</span><span class="sv2" style="color:${outRate>=100?'#22c55e':'#ef4444'}">${outRate}%</span></div>
+    <div style="margin-top:18px;text-align:center">
+      <button class="bok" onclick="location.reload()">もう一度遊ぶ</button>
+    </div>`;
+  showM(html,'mse');
+}
+
+/* ============================================================
+   INIT
+   セットアップ画面はないため、読み込み時に即プレイ開始状態にする
+============================================================ */
+document.addEventListener('DOMContentLoaded', ()=>{
+  newState();
+  updS();
+});
