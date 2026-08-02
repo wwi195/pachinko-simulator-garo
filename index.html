@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>牙狼7500 疑似遊技シミュレーター</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app">
+
+    <div id="title-bar">牙狼7500 疑似遊技シミュレーター</div>
+
+    <div id="header">
+
+      <!-- 行1: 回転数 -->
+      <div class="hrow hrow1">
+        <div class="spins-block">
+          <span class="spins-current" id="current-spins">0</span>
+          <span class="spins-unit">回</span>
+          <span class="spins-sep">／累計</span>
+          <span class="spins-total" id="total-spins-disp">0</span>
+          <span class="spins-unit">回</span>
+        </div>
+      </div>
+
+      <!-- 行2: 持ち球 / 投資 / 収支 -->
+      <div class="hrow hrow2">
+        <div class="money-block">
+          <span class="money-label">持ち球</span>
+          <span class="money-value gold" id="mochi-dama">0</span>
+          <span class="money-unit">発</span>
+        </div>
+        <div class="money-block">
+          <span class="money-label">投資</span>
+          <span class="money-value red" id="toushi-value">0</span>
+          <span class="money-unit">円</span>
+        </div>
+        <div class="money-block">
+          <span class="money-label">収支</span>
+          <span class="money-value red" id="shuushi-value">0</span>
+          <span class="money-unit">円</span>
+        </div>
+      </div>
+
+      <!-- 行3: 大当たり回数 -->
+      <div class="hrow hrow3">
+        <div class="hrow3-header">
+          <span class="hrow3-title">大当たり総回数</span>
+          <span class="total-hit-block">
+            <span class="total-hit-count" id="total-hit-count">0回</span>
+          </span>
+          <span class="fee-block">17回転/千円</span>
+        </div>
+        <div class="hrow3-normal-line">
+          <span class="hit-label2">🎯 図柄揃い合計</span>
+          <span class="hit-count" id="thfig">0回</span>
+        </div>
+        <button class="btn-sub" id="bbToggleBtn" onclick="toggleDetail()">▶ 詳細を見る</button>
+        <div class="hrow3-stats bbDetail" id="bbDetail">
+          <div class="hit-item"><span class="hit-label2">├ 極限突入</span><span class="hit-count" id="thfex">0回</span></div>
+          <div class="hit-item"><span class="hit-label2">└ 非突入</span><span class="hit-count" id="thfnorm">0回</span></div>
+          <div class="hit-item"><span class="hit-label2">⚡ チャージ</span><span class="hit-count" id="thc">0回</span></div>
+          <div class="hit-item"><span class="hit-label2">⚔️ 極限バトル成功</span><span class="hit-count" id="thew">0回</span></div>
+          <div class="hit-item"><span class="hit-label2">💔 極限バトル失敗</span><span class="hit-count" id="thex">0回</span></div>
+          <div class="hit-item"><span class="hit-label2">通常時計</span><span class="hit-count" id="sth-norm"></span></div>
+          <div class="hit-item"><span class="hit-label2">LT中計</span><span class="hit-count" id="sth-lt"></span></div>
+          <div class="hit-item"><span class="hit-label2">⚡ 7500初回</span><span class="hit-count" id="thl7f">0回</span></div>
+          <div class="hit-item"><span class="hit-label2">🟡 7500継続</span><span class="hit-count" id="thl7c">0回</span></div>
+          <div class="hit-item"><span class="hit-label2">🟢 1500継続</span><span class="hit-count" id="thlv">0回</span></div>
+          <div class="hit-item"><span class="hit-label2">⚪ 1500終了</span><span class="hit-count" id="thle">0回</span></div>
+        </div>
+      </div>
+
+    </div><!-- /header -->
+
+    <!-- 操作パネル（固定表示） -->
+    <div id="ctrl" style="display:flex;flex-direction:column;align-items:center;gap:14px;padding:20px;">
+      <button class="btn-start" id="btn1" onclick="doSpin1()">START</button>
+      <div class="auto-spin-wrap">
+        <div class="auto-spin-btns">
+          <button class="btn-auto" id="btnauto" onclick="doSpinAuto()">1万円分回す</button>
+        </div>
+        <p class="spin-cost-hint" id="autoHint">約170回転分</p>
+      </div>
+      <button class="btn-taiten" id="btnr" onclick="doRetire()">退店する</button>
+    </div>
+
+    <div id="log-area">
+      <div id="log-title">遊技履歴</div>
+      <div id="log-list"></div>
+    </div>
+
+  </div>
+
+  <!-- ===== 当たり演出モーダル ===== -->
+  <div id="ov" class="h"><div id="mb"></div></div>
+
+  <script src="calc.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
