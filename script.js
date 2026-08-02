@@ -74,3 +74,48 @@ function flushInvest(){
     S.pendingInvest=0;
   }
 }
+
+/* ============================================================
+   DISPLAY
+============================================================ */
+function updS(){
+  document.getElementById('current-spins').textContent=S.cur.toLocaleString();
+  document.getElementById('total-spins-disp').textContent=S.ttl.toLocaleString();
+
+  document.getElementById('mochi-dama').textContent=Math.floor(S.balls).toLocaleString();
+  document.getElementById('toushi-value').textContent=S.cashUsed.toLocaleString();
+
+  const shuushi=computeShuushi(S.balls,S.exRate,S.cashUsed);
+  const shuushiEl=document.getElementById('shuushi-value');
+  shuushiEl.textContent=(shuushi>=0?'+':'')+shuushi.toLocaleString();
+  shuushiEl.className='money-value '+(shuushi>=0?'green':'red');
+
+  document.getElementById('total-hit-count').textContent=`${S.hits.total}回`;
+
+  // 確率：回転数 / 当たり数 → 1/N 形式
+  const prob=n=>(S.ttl>0&&n>0)?` 1/${Math.round(S.ttl/n)}`:'';
+  const figTotal=S.hits.fex+S.hits.fnorm;
+  document.getElementById('thfig').textContent=`${figTotal}回${prob(figTotal)}`;
+  document.getElementById('thfex').textContent=`${S.hits.fex}回${prob(S.hits.fex)}`;
+  document.getElementById('thfnorm').textContent=`${S.hits.fnorm}回${prob(S.hits.fnorm)}`;
+  document.getElementById('thc').textContent=`${S.hits.bc}回${prob(S.hits.bc)}`;
+  const exTotal=S.hits.exwin+S.hits.exlost;
+  const exPct=n=>exTotal>0?` ${Math.round(n/exTotal*100)}%`:' －';
+  document.getElementById('thew').textContent=`${S.hits.exwin}回${exPct(S.hits.exwin)}`;
+  document.getElementById('thex').textContent=`${S.hits.exlost}回${exPct(S.hits.exlost)}`;
+  const normTotal=S.hits.fex+S.hits.fnorm+S.hits.bc;
+  document.getElementById('sth-norm').textContent=normTotal>0?`${normTotal}回${prob(normTotal)}`:'';
+  const ltTotal=S.hits.lt7first+S.hits.lt7cont+S.hits.ltv+S.hits.lte;
+  document.getElementById('sth-lt').textContent=ltTotal>0?`${ltTotal}回`:'';
+  const ltPct=n=>ltTotal>0?` ${Math.round(n/ltTotal*100)}%`:'';
+  document.getElementById('thl7f').textContent=`${S.hits.lt7first}回`;
+  document.getElementById('thl7c').textContent=`${S.hits.lt7cont}回${ltPct(S.hits.lt7cont)}`;
+  document.getElementById('thlv').textContent=`${S.hits.ltv}回${ltPct(S.hits.ltv)}`;
+  document.getElementById('thle').textContent=`${S.hits.lte}回${ltPct(S.hits.lte)}`;
+}
+
+function toggleDetail(){
+  _detailOpen=!_detailOpen;
+  document.getElementById('bbDetail').classList.toggle('open',_detailOpen);
+  document.getElementById('bbToggleBtn').textContent=_detailOpen?'▼ 詳細を閉じる':'▶ 詳細を見る';
+}
