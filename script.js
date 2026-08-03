@@ -267,6 +267,11 @@ function tmLTEnd(n,b7500,b1500,totalGain){return `
   <div class="ltend-sub">終了ボーナス（獲得 ${C.B15}発）</div>
   <button class="bok" style="margin-top:16px" onclick="closeM()">通常時へ戻る</button>`;}
 
+function tmYomiAnnounce(){return `
+  <div class="mt" style="color:#ffd700">🎉 先祝告知発生！</div>
+  <div style="font-size:13px;color:#aaa;margin:12px 0 18px;">図柄揃いのチャンス...！</div>
+  <button class="bok" onclick="closeM()">確認</button>`;}
+
 function tmSettings(){return `
   <div class="mt" style="color:#ffd700">演出設定</div>
   <div style="font-size:12px;color:#888;margin:10px 0 18px;line-height:1.6;">
@@ -302,7 +307,7 @@ async function doHit(type){
   await showM(tmFig(),'mn');
 
   let runBalls=C.B15, parts=[];
-  const ev=type==='holder'?'牙狼保留→図柄揃い':'牙狼剣→図柄揃い';
+  const ev={holder:'牙狼保留→図柄揃い', sword:'牙狼剣→図柄揃い', yomi:'先読み→図柄揃い'}[type];
 
   if(Math.random()<C.PEX){
     // 極限7500バトル突入（50%）
@@ -372,6 +377,50 @@ async function doHit(type){
 }
 
 /* ============================================================
+   FIG ZONE
+   牙狼剣・牙狼保留のON/OFF状態から、今回の抽選で使う確率レンジを決める。
+   図柄揃いの当選確率（WIN_RATE）はどのモードでも常に一定。
+============================================================ */
+function getFigZone(){
+  if(_holderOn && _swordOn) return {mode:'both'};
+  if(_holderOn && !_swordOn){
+    const b=computeMergedRange(WIN_RATE, 0.80); // 牙狼保留の信頼度80%を維持
+    return {mode:'holderOnly', winBoundary:b.winBoundary, totalBoundary:b.totalBoundary};
+  }
+  if(!_holderOn && _swordOn){
+    const b=computeMergedRange(WIN_RATE, 0.40); // 牙狼剣の信頼度40%を維持
+    return {mode:'swordOnly', winBoundary:b.winBoundary, totalBoundary:b.totalBoundary};
+  }
+  return {mode:'yomi'};
+}
+
+async function doHolderOrSwordEvent(isHolder, win){
+  flushInvest();
+  if(isHolder){
+    await showM(tmHolderPre(S.cur),'mh');
+    await showM(tmHolderResult(win),'mh');
+    if(!win) addH(`${S.cur}回転目：牙狼保留出現（ハズレ）`);
+    if(win) await doHit('holder');
+  } else {
+    await showM(tmSwordPre(S.cur),'ms');
+    await showM(tmSwordResult(win),'ms');
+    if(!win) addH(`${S.cur}回転目：牙狼剣出現（ハズレ）`);
+    if(win) await doHit('sword');
+  }
+  return {stopped:true};
+}
+
+async function doChargeHit(){
+  flushInvest();
+  award(C.CHB);
+  S.hits.total++; S.hits.bc++;
+  addH(`${S.cur}回転目：牙狼チャージ！（+${C.CHB}発）`);
+  updS();
+  await showM(tmCharge(S.cur),'mc');
+  return {stopped:true};
+}
+
+/* ============================================================
    ONE SPIN
 ============================================================ */
 async function oneSpin(){
@@ -379,37 +428,33 @@ async function oneSpin(){
   consume(); updS();
 
   const r=Math.random();
+  const zone=getFigZone();
 
-  if(r<T2){
-    const win=r<T1;
-    flushInvest();
-    await showM(tmHolderPre(S.cur),'mh');
-    await showM(tmHolderResult(win),'mh');
-    if(!win) addH(`${S.cur}回転目：牙狼保留出現（ハズレ）`);
-    if(win) await doHit('holder');
-    return {stopped:true};
+  if(zone.mode==='both'){
+    if(r<T2) return await doHolderOrSwordEvent(true, r<T1);
+    if(r<T4) return await doHolderOrSwordEvent(false, r<T3);
+    if(r<T5) return await doChargeHit();
+    return {ok:true};
   }
 
+  if(zone.mode==='holderOnly' || zone.mode==='swordOnly'){
+    if(r<zone.totalBoundary) return await doHolderOrSwordEvent(zone.mode==='holderOnly', r<zone.winBoundary);
+    if(r<zone.totalBoundary+C.P_CH) return await doChargeHit();
+    return {ok:true};
+  }
+
+  // yomi（両方OFF）：発生範囲・当落判定は通常時のT1〜T4と完全に同一（変更しない）
   if(r<T4){
-    const win=r<T3;
-    flushInvest();
-    await showM(tmSwordPre(S.cur),'ms');
-    await showM(tmSwordResult(win),'ms');
-    if(!win) addH(`${S.cur}回転目：牙狼剣出現（ハズレ）`);
-    if(win) await doHit('sword');
-    return {stopped:true};
+    const win=(r<T1)||(r>=T2&&r<T3);
+    if(win){
+      flushInvest();
+      await showM(tmYomiAnnounce(),'mn');
+      await doHit('yomi');
+      return {stopped:true};
+    }
+    return {ok:true}; // サイレントミス：モーダル・履歴なし。auto-spinも止まらず継続
   }
-
-  if(r<T5){
-    flushInvest();
-    award(C.CHB);
-    S.hits.total++; S.hits.bc++;
-    addH(`${S.cur}回転目：牙狼チャージ！（+${C.CHB}発）`);
-    updS();
-    await showM(tmCharge(S.cur),'mc');
-    return {stopped:true};
-  }
-
+  if(r<T5) return await doChargeHit();
   return {ok:true};
 }
 
