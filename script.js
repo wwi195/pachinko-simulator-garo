@@ -220,14 +220,14 @@ function tmExWin(){return `
   ${imgDiv('images/extreme_win.jpg','極限7500ボーナス\n画像プレースホルダー')}
   <div class="mt" style="color:#ffd700">🏆 極限7500ボーナス！</div>
   <div class="bm">7500ボーナス！</div>
-  <div class="bs">（獲得 ${C.B75}発）</div>
+  <div class="bs">（獲得 ${C.DISP_B75}発）</div>
   <div style="color:#22c55e;font-weight:bold;margin:10px 0">🌟 魔戒CHANCE LT 突入！！</div>
   <button class="bok" onclick="closeM()">魔戒CHANCE LTへ →</button>`;}
 
 function tmExLose(){return `
   <div class="mt" style="color:#888">😢 バトル敗北…</div>
   <div class="bm">1500ボーナス！</div>
-  <div class="bs">（獲得 ${C.B15}発）</div>
+  <div class="bs">（獲得 ${C.DISP_B15}発）</div>
   <div style="font-size:11px;color:#555;margin-bottom:14px">通常時へ戻る</div>
   <button class="bok" onclick="closeM()">続ける</button>`;}
 
@@ -245,7 +245,7 @@ function tmLTGaro(n){return `
   <div class="ltl">連チャン数</div>
   <div class="ltc" style="color:#ffd700">${n}</div>
   <div class="bm">7500ボーナス！</div>
-  <div class="bs">（獲得 ${C.B75}発）</div>
+  <div class="bs">（獲得 ${C.DISP_B75}発）</div>
   <div style="color:#ffd700;font-weight:bold;margin-bottom:12px">LT継続！！</div>
   <button class="bok" onclick="closeM()">続ける！</button>`;}
 
@@ -254,17 +254,17 @@ function tmLTVic(n){return `
   <div class="ltl">連チャン数</div>
   <div class="ltc" style="color:#22c55e">${n}</div>
   <div class="bm">1500ボーナス！</div>
-  <div class="bs">（獲得 ${C.B15}発）</div>
+  <div class="bs">（獲得 ${C.DISP_B15}発）</div>
   <div style="color:#22c55e;font-weight:bold;margin-bottom:12px">LT継続！</div>
   <button class="bok" onclick="closeM()">続ける！</button>`;}
 
 function tmLTEnd(n,b7500,b1500,totalGain){return `
   <div class="mt" style="color:#aaa">🌙 ${n}連チャン終了</div>
-  <div class="ltend-row"><span>🎯 図柄揃い</span><span>${C.B15.toLocaleString()}発</span></div>
+  <div class="ltend-row"><span>🎯 図柄揃い</span><span>${C.DISP_B15.toLocaleString()}発</span></div>
   <div class="ltend-row"><span>7500ボーナス</span><span>${b7500}回</span></div>
   <div class="ltend-row"><span>1500ボーナス</span><span>${b1500}回</span></div>
   <div class="ltend-total">合計獲得　${totalGain.toLocaleString()}発</div>
-  <div class="ltend-sub">終了ボーナス（獲得 ${C.B15}発）</div>
+  <div class="ltend-sub">終了ボーナス（獲得 ${C.DISP_B15}発）</div>
   <button class="bok" style="margin-top:16px" onclick="closeM()">通常時へ戻る</button>`;}
 
 function tmYomiAnnounce(){return `
@@ -306,7 +306,7 @@ async function doHit(type){
   updS();
   await showM(tmFig(),'mn');
 
-  let runBalls=C.B15, parts=[];
+  let nominalGain=C.DISP_B15, parts=[];
   const ev={holder:'牙狼保留→図柄揃い', sword:'牙狼剣→図柄揃い', yomi:'先読み→図柄揃い'}[type];
 
   if(Math.random()<C.PEX){
@@ -319,7 +319,7 @@ async function doHit(type){
       // 極限WIN → 7500 + LT突入
       award(C.B75);
       S.hits.total++; S.hits.exwin++; S.hits.lt7first++;
-      runBalls+=C.B75; parts.push('7500初回');
+      nominalGain+=C.DISP_B75; parts.push('7500初回');
       let b7500This=1, b1500This=0;
       updS();
       await showM(tmExWin(),'m7');
@@ -332,36 +332,35 @@ async function doHit(type){
         if(r<C.PLG){
           award(C.B75);
           S.hits.total++; S.hits.lt7cont++; b7500This++;
-          runBalls+=C.B75; parts.push('7500継続');
+          nominalGain+=C.DISP_B75; parts.push('7500継続');
           updS();
           await blackout();
           await showM(tmLTGaro(ltN),'m7');
         } else if(r<C.PLV){
           award(C.B15);
           S.hits.total++; S.hits.ltv++; b1500This++;
-          runBalls+=C.B15; parts.push('継続');
+          nominalGain+=C.DISP_B15; parts.push('継続');
           updS();
           await showM(tmLTVic(ltN),'mvi');
         } else {
           award(C.B15);
           S.hits.total++; S.hits.lte++;
-          runBalls+=C.B15; parts.push('終了');
+          nominalGain+=C.DISP_B15; parts.push('終了');
           updS();
-          const ltGain=runBalls-C.B15;
-          await showM(tmLTEnd(ltN,b7500This,b1500This,ltGain),'me');
+          await showM(tmLTEnd(ltN,b7500This,b1500This,nominalGain),'me');
           break;
         }
       }
-      addH(`${spin0}回転目：${ev} → 極限突入 → LT${ltN}連(${parts.join('→')}) → 計${runBalls}発`,'hit');
+      addH(`${spin0}回転目：${ev} → 極限突入 → LT${ltN}連(${parts.join('→')}) → 計${nominalGain}発`,'hit');
 
     } else {
       // 極限LOSE → 1500終了
       award(C.B15);
       S.hits.total++; S.hits.exlost++;
-      runBalls+=C.B15;
+      nominalGain+=C.DISP_B15;
       updS();
       await showM(tmExLose(),'me');
-      addH(`${spin0}回転目：${ev} → 極限突入 → バトル敗北 → 計${runBalls}発`,'hit');
+      addH(`${spin0}回転目：${ev} → 極限突入 → バトル敗北 → 計${nominalGain}発`,'hit');
     }
 
   } else {
@@ -369,7 +368,7 @@ async function doHit(type){
     S.hits.total++; S.hits.fnorm++;
     updS();
     await showM(tmFigMiss(),'me');
-    addH(`${spin0}回転目：${ev} → 非突入 → 計${runBalls}発`,'hit');
+    addH(`${spin0}回転目：${ev} → 非突入 → 計${nominalGain}発`,'hit');
   }
 
   S.cur=0;
