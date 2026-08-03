@@ -124,12 +124,6 @@ body {
 .total-hit-count { font-size: 12px; font-weight: bold; color: #f0c040; }
 .total-hit-prob  { font-size: 9px; color: #666; }
 
-.fee-block {
-  font-size: 9px;
-  color: #555;
-  white-space: nowrap;
-}
-
 /* ========== メイン画面 ========== */
 #main-screen {
   flex: 1;
