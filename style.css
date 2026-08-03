@@ -345,3 +345,18 @@ body {
 .ltend-total{font-size:24px;font-weight:bold;color:#ffd700;margin-top:10px;}
 .ltend-net{font-size:13px;color:#777;margin-bottom:8px;}
 .ltend-sub{font-size:11px;color:#555;}
+
+/* ============================================================
+   GARO7500 固有: 行2レイアウト（収支メイン化・回転数レート追加）
+============================================================ */
+.money-block.small .money-label { font-size: 9px; }
+.money-block.small .money-value { font-size: 13px; }
+.money-block.small .money-unit  { font-size: 9px; }
+
+.money-block.main .money-label { font-size: 11px; }
+.money-block.main .money-value { font-size: 27px; }
+.money-block.main .money-unit  { font-size: 13px; }
+
+.rate-block { display:flex; flex-direction:column; align-items:center; gap:1px; }
+.rate-label { font-size: 9px; color: #666; white-space:nowrap; }
+.rate-value { font-size: 13px; font-weight: bold; color: #ccc; white-space:nowrap; }
