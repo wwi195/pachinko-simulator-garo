@@ -12,15 +12,19 @@ const C={
   PEX:0.50, PEW:0.50, PLG:0.25, PLV:0.76,
   SPK:17,      // 固定レート：17回転/千円（等価）
   EXRATE:4.0,  // 固定：等価交換（4円/4円）
+  DISP_B15:1500, // 表示専用（実際の払い出しはB15=1400のまま変更しない）
+  DISP_B75:7500, // 表示専用（実際の払い出しはB75=7000のまま変更しない）
 };
 const T1=C.P_HW, T2=T1+C.P_HL, T3=T2+C.P_SW, T4=T3+C.P_SL, T5=T4+C.P_CH;
 const AUTO_SPIN_COUNT = C.SPK*10; // 「1万円分回す」＝170回転
+const WIN_RATE = C.P_HW + C.P_SW; // 図柄揃い当選確率（牙狼剣+牙狼保留 合算・固定、約1/440）
 
 /* ============================================================
    STATE
 ============================================================ */
 let S={};
 let _busy=false, _detailOpen=false;
+let _swordOn=true, _holderOn=true; // 演出ON/OFF設定（ページ再読み込みでリセット、永続化しない）
 
 function newState(){
   S={
@@ -263,6 +267,29 @@ function tmLTEnd(n,b7500,b1500,totalGain){return `
   <div class="ltend-sub">終了ボーナス（獲得 ${C.B15}発）</div>
   <button class="bok" style="margin-top:16px" onclick="closeM()">通常時へ戻る</button>`;}
 
+function tmSettings(){return `
+  <div class="mt" style="color:#ffd700">演出設定</div>
+  <div style="font-size:12px;color:#888;margin:10px 0 18px;line-height:1.6;">
+    牙狼剣・牙狼保留のON/OFFを切り替えられます。<br>
+    両方OFFにすると、当たりの時だけ告知が出る「先読みモード」になります。
+  </div>
+  <button class="bok" style="display:block;width:100%;margin-bottom:10px;" onclick="toggleSword()">牙狼剣演出：${_swordOn?'ON':'OFF'}</button>
+  <button class="bok" style="display:block;width:100%;margin-bottom:18px;" onclick="toggleHolder()">牙狼保留演出：${_holderOn?'ON':'OFF'}</button>
+  <button class="bok" style="background:#2a2a2a;color:#ccc;" onclick="closeM()">閉じる</button>`;}
+
+function toggleSword(){
+  _swordOn=!_swordOn;
+  showM(tmSettings(),'mn');
+}
+function toggleHolder(){
+  _holderOn=!_holderOn;
+  showM(tmSettings(),'mn');
+}
+function openSettings(){
+  if(_busy) return;
+  showM(tmSettings(),'mn');
+}
+
 /* ============================================================
    BONUS SEQUENCE
 ============================================================ */
@@ -390,7 +417,7 @@ async function oneSpin(){
    BUTTON HANDLERS
 ============================================================ */
 function lockAll(v){
-  ['btn1','btnauto','btnr'].forEach(id=>{document.getElementById(id).disabled=v;});
+  ['btn1','btnauto','btnr','btnsettings'].forEach(id=>{document.getElementById(id).disabled=v;});
 }
 
 async function doSpin1(){

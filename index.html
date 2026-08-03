@@ -86,7 +86,10 @@
         </div>
         <p class="spin-cost-hint" id="autoHint">約170回転分</p>
       </div>
-      <button class="btn-taiten" id="btnr" onclick="doRetire()">退店する</button>
+      <div style="display:flex;gap:10px;">
+        <button class="btn-taiten" id="btnsettings" onclick="openSettings()">⚙ 演出設定</button>
+        <button class="btn-taiten" id="btnr" onclick="doRetire()">退店する</button>
+      </div>
     </div>
 
     <div id="log-area">
