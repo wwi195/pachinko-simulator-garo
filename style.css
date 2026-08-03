@@ -360,3 +360,8 @@ body {
 .rate-block { display:flex; flex-direction:column; align-items:center; gap:1px; }
 .rate-label { font-size: 9px; color: #666; white-space:nowrap; }
 .rate-value { font-size: 13px; font-weight: bold; color: #ccc; white-space:nowrap; }
+
+/* 4ブロック化に伴う折り返し対策: 収まらない場合はブロック単位で折り返す
+   （ブロック内テキストの途中折り返しを防止） */
+.hrow2 { flex-wrap: wrap; row-gap: 4px; }
+.money-block, .rate-block { white-space: nowrap; }
