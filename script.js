@@ -384,11 +384,13 @@ async function doHit(type){
 function getFigZone(){
   if(_holderOn && _swordOn) return {mode:'both'};
   if(_holderOn && !_swordOn){
-    const b=computeMergedRange(WIN_RATE, 0.80); // 牙狼保留の信頼度80%を維持
+    const confidence = C.P_HW / (C.P_HW + C.P_HL); // 牙狼保留の信頼度（=画面の「80%」表示と同一の値）
+    const b=computeMergedRange(WIN_RATE, confidence);
     return {mode:'holderOnly', winBoundary:b.winBoundary, totalBoundary:b.totalBoundary};
   }
   if(!_holderOn && _swordOn){
-    const b=computeMergedRange(WIN_RATE, 0.40); // 牙狼剣の信頼度40%を維持
+    const confidence = C.P_SW / (C.P_SW + C.P_SL); // 牙狼剣の信頼度（=画面の「40%」表示と同一の値）
+    const b=computeMergedRange(WIN_RATE, confidence);
     return {mode:'swordOnly', winBoundary:b.winBoundary, totalBoundary:b.totalBoundary};
   }
   return {mode:'yomi'};
