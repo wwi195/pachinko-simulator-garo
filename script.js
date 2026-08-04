@@ -276,7 +276,7 @@ function tmSettings(){return `
   <div class="mt" style="color:#ffd700">演出設定</div>
   <div style="font-size:12px;color:#888;margin:10px 0 18px;line-height:1.6;">
     牙狼剣・牙狼保留のON/OFFを切り替えられます。<br>
-    両方OFFにすると、当たりの時だけ告知が出る「先読みモード」になります。
+    両方OFFにすると、当たりの時だけ告知が出る「先祝モード」になります。
   </div>
   <button class="bok" style="display:block;width:100%;margin-bottom:10px;" onclick="toggleSword()">牙狼剣演出：${_swordOn?'ON':'OFF'}</button>
   <button class="bok" style="display:block;width:100%;margin-bottom:18px;" onclick="toggleHolder()">牙狼保留演出：${_holderOn?'ON':'OFF'}</button>
@@ -307,7 +307,7 @@ async function doHit(type){
   await showM(tmFig(),'mn');
 
   let nominalGain=C.DISP_B15, parts=[];
-  const ev={holder:'牙狼保留→図柄揃い', sword:'牙狼剣→図柄揃い', yomi:'先読み→図柄揃い'}[type];
+  const ev={holder:'牙狼保留→図柄揃い', sword:'牙狼剣→図柄揃い', yomi:'先祝→図柄揃い'}[type];
 
   if(Math.random()<C.PEX){
     // 極限7500バトル突入（50%）
