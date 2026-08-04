@@ -24,18 +24,8 @@
         </div>
       </div>
 
-      <!-- 行2: 持ち球 / 投資 / 収支 / 回転数レート -->
+      <!-- 行2: 収支 / 1000円あたり回転数 / 大当たり総回数 -->
       <div class="hrow hrow2">
-        <div class="money-block small">
-          <span class="money-label">持ち球</span>
-          <span class="money-value gold" id="mochi-dama">0</span>
-          <span class="money-unit">発</span>
-        </div>
-        <div class="money-block small">
-          <span class="money-label">投資</span>
-          <span class="money-value red" id="toushi-value">0</span>
-          <span class="money-unit">円</span>
-        </div>
         <div class="money-block main">
           <span class="money-label">収支</span>
           <span class="money-value red" id="shuushi-value">0</span>
@@ -45,22 +35,27 @@
           <span class="rate-label">1000円あたり</span>
           <span class="rate-value">17回転</span>
         </div>
+        <div class="total-hit-mini">
+          <span class="total-hit-mini-label">大当たり総回数</span>
+          <span class="total-hit-count" id="total-hit-count">0回</span>
+        </div>
       </div>
 
-      <!-- 行3: 大当たり回数 -->
+      <!-- 行3: 詳細（持ち球・投資・図柄揃い合計・内訳） -->
       <div class="hrow hrow3">
-        <div class="hrow3-header">
-          <span class="hrow3-title">大当たり総回数</span>
-          <span class="total-hit-block">
-            <span class="total-hit-count" id="total-hit-count">0回</span>
-          </span>
-        </div>
-        <div class="hrow3-normal-line">
-          <span class="hit-label2">🎯 図柄揃い合計</span>
-          <span class="hit-count" id="thfig">0回</span>
-        </div>
         <button class="btn-sub" id="bbToggleBtn" onclick="toggleDetail()">▶ 詳細を見る</button>
         <div class="hrow3-stats bbDetail" id="bbDetail">
+          <div class="money-block small">
+            <span class="money-label">持ち球</span>
+            <span class="money-value gold" id="mochi-dama">0</span>
+            <span class="money-unit">発</span>
+          </div>
+          <div class="money-block small">
+            <span class="money-label">投資</span>
+            <span class="money-value red" id="toushi-value">0</span>
+            <span class="money-unit">円</span>
+          </div>
+          <div class="hit-item"><span class="hit-label2">🎯 図柄揃い合計</span><span class="hit-count" id="thfig">0回</span></div>
           <div class="hit-item"><span class="hit-label2">├ 極限突入</span><span class="hit-count" id="thfex">0回</span></div>
           <div class="hit-item"><span class="hit-label2">└ 非突入</span><span class="hit-count" id="thfnorm">0回</span></div>
           <div class="hit-item"><span class="hit-label2">⚡ チャージ</span><span class="hit-count" id="thc">0回</span></div>

@@ -79,27 +79,6 @@ body {
   gap: 3px;
 }
 
-.hrow3-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-}
-
-.hrow3-title {
-  font-size: 11px;
-  font-weight: bold;
-  color: #999;
-  letter-spacing: 0.5px;
-}
-
-.hrow3-normal-line {
-  display: flex;
-  align-items: baseline;
-  gap: 4px;
-  margin-bottom: 2px;
-}
-
 .hrow3-stats {
   display: flex;
   gap: 14px;
@@ -119,10 +98,10 @@ body {
 .hit-prob   { font-size: 9px; color: #555; }
 .rush-entry { font-size: 9px; color: #ff8855; }
 
-.total-hit-block { display: flex; align-items: baseline; gap: 3px; }
-.total-hit-label { font-size: 9px; color: #777; }
 .total-hit-count { font-size: 12px; font-weight: bold; color: #f0c040; }
-.total-hit-prob  { font-size: 9px; color: #666; }
+
+.total-hit-mini { display:flex; flex-direction:column; align-items:center; gap:1px; white-space:nowrap; }
+.total-hit-mini-label { font-size: 9px; color: #666; }
 
 /* ========== メイン画面 ========== */
 #main-screen {
